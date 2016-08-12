@@ -1,0 +1,9 @@
+# Ignore vim swap files
+*.swp
+
+# Ignore generated js in repository
+resources/dottydoc.js
+resources/dottydoc.js.map
+
+# Ignore sbt related directories
+target/
