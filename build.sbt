@@ -5,7 +5,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 lazy val `dottydoc-client` = project.in(file("."))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    scalaSource in Compile       := baseDirectory.value / "src",
+    scalaSource       in Compile := baseDirectory.value / "src",
     resourceDirectory in Compile := baseDirectory.value / "resources",
 
     crossTarget in (Compile, fullOptJS) := (resourceDirectory in Compile).value,
@@ -25,11 +25,9 @@ lazy val `dottydoc-client` = project.in(file("."))
   .settings(publishing)
 
 lazy val publishing = Seq(
-  organization in Global := "ch.epfl.lamp",
-  organizationName in Global := "LAMP/EPFL",
+  organization         in Global := "ch.epfl.lamp",
+  organizationName     in Global := "LAMP/EPFL",
   organizationHomepage in Global := Some(url("http://lamp.epfl.ch")),
-
-  crossPaths := false,
 
   publishLocal <<= publishLocal dependsOn (fullOptJS in Compile),
   publish      <<= publish      dependsOn (fullOptJS in Compile),
