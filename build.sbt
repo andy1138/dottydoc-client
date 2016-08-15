@@ -2,35 +2,35 @@ import sbt._
 import scala.xml.{Node => XmlNode, NodeSeq => XmlNodeSeq, Elem => XmlElem}
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
+scalaVersion := "2.11.8"
+
 lazy val `dottydoc-client` = project.in(file("."))
+  .settings(
+    resourceDirectory in Compile := baseDirectory.value / "resources",
+    resources in Compile += (fullOptJS in (`client-js`, Compile)).value.data
+  )
+  .settings(publishing)
+
+
+lazy val `client-js` = project.in(file("js"))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    scalaSource       in Compile := baseDirectory.value / "src",
-    resourceDirectory in Compile := baseDirectory.value / "resources",
-
-    crossTarget in (Compile, fullOptJS) := (resourceDirectory in Compile).value,
-    crossTarget in (Compile, fastOptJS) := (resourceDirectory in Compile).value,
-
-    artifactPath in(Compile, fullOptJS) :=
-      (crossTarget in(Compile, fullOptJS)).value / "dottydoc.js",
-
-    artifactPath in(Compile, fastOptJS) :=
-      (crossTarget in(Compile, fastOptJS)).value / "dottydoc-fast.js",
+    triggeredMessage  in ThisBuild := Watched.clearWhenTriggered,
+    scalaSource       in Compile   := baseDirectory.value / "src",
 
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0" % "provided",
       "com.lihaoyi" %%% "scalatags" % "0.5.5" % "provided"
     )
   )
-  .settings(publishing)
 
 lazy val publishing = Seq(
+  version              in Global := "0.1-SNAPSHOT",
   organization         in Global := "ch.epfl.lamp",
   organizationName     in Global := "LAMP/EPFL",
   organizationHomepage in Global := Some(url("http://lamp.epfl.ch")),
 
-  publishLocal <<= publishLocal dependsOn (fullOptJS in Compile),
-  publish      <<= publish      dependsOn (fullOptJS in Compile),
+  crossPaths := false,
 
   publishArtifact in Test := false,
 
@@ -63,5 +63,3 @@ lazy val publishing = Seq(
     new RuleTransformer(removeDeps).transform(node).head
   }
 )
-
-scalaVersion := "2.11.8"
