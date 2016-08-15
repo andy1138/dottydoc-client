@@ -4,15 +4,15 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 val dottyVersion = "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.8"
-
 lazy val `dottydoc-client` = project.in(file("."))
   .settings(
+    scalaVersion in Global := "2.11.5",
+    ivyScala := ivyScala.value.map(_.copy(overrideScalaVersion = true)),
+
     triggeredMessage  in ThisBuild := Watched.clearWhenTriggered,
     scalaSource       in Test      := baseDirectory.value / "test" / "src",
     resourceDirectory in Compile   := baseDirectory.value / "resources",
     resources         in Compile   += (fullOptJS in (`client-js`, Compile)).value.data,
-    resources         in Test      += (fastOptJS in (`client-js`, Compile)).value.data,
     compile           in Test      <<= (compile in Test) dependsOn cloneScalaLib,
 
     resolvers += Resolver.sonatypeRepo("snapshots"),
