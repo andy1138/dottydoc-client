@@ -79,6 +79,7 @@ lazy val publishing = Seq(
   crossPaths := false,
 
   publishArtifact in Test := false,
+  publishMavenStyle := true,
 
   licenses += ("BSD New",
     url("https://github.com/lampepfl/dotty/blob/master/LICENSE.md")),
