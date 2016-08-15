@@ -18,7 +18,7 @@ object GenerateCollections extends Dottydoc {
     .lines
     .foldLeft(Array.empty[String]) { (acc, line) =>
       if (line.startsWith("#")) acc
-      else if (line == "") acc
+      else if (line.isEmpty) acc
       else acc :+ line
     }
 
