@@ -13,6 +13,11 @@ lazy val `dottydoc-client` =
     resources         in Compile   += (fullOptJS in (`client-js`, Compile)).value.data,
     compile           in Test      <<= (compile in Test) dependsOn cloneScalaLib,
 
+    watchSources ++= Seq(
+      baseDirectory.value / "resources",
+      baseDirectory.value / "js" / "src"
+    ),
+
     resolvers += Resolver.sonatypeRepo("snapshots"),
 
     libraryDependencies ++= Seq(
@@ -51,6 +56,7 @@ lazy val `client-js` =
   .enablePlugins(ScalaJSPlugin)
   .settings(
     scalaSource in Compile := baseDirectory.value / "src",
+    artifactPath in (Compile, fullOptJS) := (crossTarget in(Compile, fullOptJS)).value / "dottydoc.js",
 
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0" % "provided",
