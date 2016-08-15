@@ -78,11 +78,29 @@ lazy val publishing = Seq(
 
   crossPaths := false,
 
+  publishArtifact := true,
   publishArtifact in Test := false,
   publishMavenStyle := true,
 
-  licenses += ("BSD New",
-    url("https://github.com/lampepfl/dotty/blob/master/LICENSE.md")),
+  isSnapshot := version.value.contains("SNAPSHOT"),
+
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  },
+
+  licenses +=
+    ("BSD New",url("https://github.com/lampepfl/dotty/blob/master/LICENSE.md")),
+
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/lampepfl/dotty"),
+      "scm:git:git@github.com:lampepfl/dotty.git"
+    )
+  ),
 
   pomExtra := (
     <developers>
