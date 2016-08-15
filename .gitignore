@@ -7,3 +7,6 @@ resources/dottydoc.js.map
 
 # Ignore sbt related directories
 target/
+
+# Ignore test deps
+scala-scala/

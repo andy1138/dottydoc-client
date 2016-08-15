@@ -2,20 +2,33 @@ import sbt._
 import scala.xml.{Node => XmlNode, NodeSeq => XmlNodeSeq, Elem => XmlElem}
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
+val dottyVersion = "0.1-SNAPSHOT"
+
 scalaVersion := "2.11.8"
 
 lazy val `dottydoc-client` = project.in(file("."))
   .settings(
-    resourceDirectory in Compile := baseDirectory.value / "resources",
-    resources in Compile += (fullOptJS in (`client-js`, Compile)).value.data
+    triggeredMessage  in ThisBuild := Watched.clearWhenTriggered,
+    scalaSource       in Test      := baseDirectory.value / "test" / "src",
+    resourceDirectory in Compile   := baseDirectory.value / "resources",
+    resources         in Compile   += (fullOptJS in (`client-js`, Compile)).value.data,
+    resources         in Test      += (fastOptJS in (`client-js`, Compile)).value.data,
+    compile           in Test      <<= (compile in Test) dependsOn cloneScalaLib,
+
+    resolvers += Resolver.sonatypeRepo("snapshots"),
+
+    libraryDependencies ++= Seq(
+      "ch.epfl.lamp" % "scala-library_2.11" % dottyVersion,
+      "ch.epfl.lamp" % "dotty_2.11" % dottyVersion,
+      "com.github.pathikrit"  %% "better-files" % "2.16.0",
+      "com.gilt" %% "handlebars-scala" % "2.1.1"
+    )
   )
   .settings(publishing)
-
 
 lazy val `client-js` = project.in(file("js"))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    triggeredMessage  in ThisBuild := Watched.clearWhenTriggered,
     scalaSource       in Compile   := baseDirectory.value / "src",
 
     libraryDependencies ++= Seq(
@@ -23,6 +36,12 @@ lazy val `client-js` = project.in(file("js"))
       "com.lihaoyi" %%% "scalatags" % "0.5.5" % "provided"
     )
   )
+
+lazy val cloneScalaLib = taskKey[Unit]("Download the scala-scala library compatible with dotty")
+
+cloneScalaLib := {
+  "scripts/clonelib.sh" !
+}
 
 lazy val publishing = Seq(
   version              in Global := "0.1-SNAPSHOT",
