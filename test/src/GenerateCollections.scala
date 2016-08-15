@@ -13,12 +13,12 @@ object GenerateCollections extends Dottydoc {
   val templatePath: String =
     getResource("/template.html").path.toAbsolutePath.toString
 
-  val scala2Lib: Array[String] =
+  val whitelistedFiles: Array[String] =
     getResource("/scala-collections.whitelist")
     .lines
+    .map(_.trim)
     .foldLeft(Array.empty[String]) { (acc, line) =>
-      if (line.startsWith("#")) acc
-      else if (line.isEmpty) acc
+      if (line.startsWith("#") || line.isEmpty || line.endsWith("package.scala")) acc
       else acc :+ line
     }
 
@@ -30,9 +30,8 @@ object GenerateCollections extends Dottydoc {
     .toList
 
   override def main(args: Array[String]): Unit = {
-    println(resources)
     val index = createIndex {
-      "-language:Scala2" +: scala2Lib.toArray
+      "-language:Scala2" +: whitelistedFiles
     }
 
     buildDocs(

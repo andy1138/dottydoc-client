@@ -4,11 +4,9 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 val dottyVersion = "0.1-SNAPSHOT"
 
-lazy val `dottydoc-client` = project.in(file("."))
+lazy val `dottydoc-client` =
+  project.in(file("."))
   .settings(
-    scalaVersion in Global := "2.11.5",
-    ivyScala := ivyScala.value.map(_.copy(overrideScalaVersion = true)),
-
     triggeredMessage  in ThisBuild := Watched.clearWhenTriggered,
     scalaSource       in Test      := baseDirectory.value / "test" / "src",
     resourceDirectory in Compile   := baseDirectory.value / "resources",
@@ -22,14 +20,37 @@ lazy val `dottydoc-client` = project.in(file("."))
       "ch.epfl.lamp" % "dotty_2.11" % dottyVersion,
       "com.github.pathikrit"  %% "better-files" % "2.16.0",
       "com.gilt" %% "handlebars-scala" % "2.1.1"
-    )
+    ),
+
+    // The rest of the settings are stolen from the dotty project build and are
+    // needed in order for the compiler in test to work
+
+    scalaVersion in Global := "2.11.5",
+    ivyScala := ivyScala.value.map(_.copy(overrideScalaVersion = true)),
+    autoScalaLibrary := false,
+
+    fork in run := true,
+    fork in Test := true,
+    parallelExecution in Test := false,
+
+    javaOptions <++= (dependencyClasspath in Runtime, packageBin in Compile) map { (attList, bin) =>
+      // put the Scala {library, reflect} in the classpath
+      val path = for {
+        file <- attList.map(_.data)
+        path = file.getAbsolutePath
+      } yield "-Xbootclasspath/p:" + path
+
+      // dotty itself needs to be in the bootclasspath
+      ("-Xbootclasspath/p:" + "dotty.jar") :: ("-Xbootclasspath/a:" + bin) :: path.toList
+    }
   )
   .settings(publishing)
 
-lazy val `client-js` = project.in(file("js"))
+lazy val `client-js` =
+  project.in(file("js"))
   .enablePlugins(ScalaJSPlugin)
   .settings(
-    scalaSource       in Compile   := baseDirectory.value / "src",
+    scalaSource in Compile := baseDirectory.value / "src",
 
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0" % "provided",

@@ -10,3 +10,6 @@ target/
 
 # Ignore test deps
 scala-scala/
+
+# Ignore build dirs
+build/
