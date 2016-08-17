@@ -3,6 +3,7 @@ package test
 
 import better.files._
 import java.io.{File => JFile}
+import java.net.URL
 
 import dotty.tools.dottydoc.api.scala.Dottydoc
 
@@ -10,8 +11,8 @@ object GenerateCollections extends Dottydoc {
   def getResource(path: String): File =
     new JFile(getClass.getResource(path).toURI).toScala
 
-  val templatePath: String =
-    getResource("/template.html").path.toAbsolutePath.toString
+  val templatePath: URL =
+    getResource("/template.html").path.toUri.toURL
 
   val whitelistedFiles: Array[String] =
     getResource("/scala-collections.whitelist")
@@ -22,11 +23,11 @@ object GenerateCollections extends Dottydoc {
       else acc :+ line
     }
 
-  val resources: List[String] =
+  val resources: List[URL] =
     getResource("/template.html")
     .parent
     .list
-    .map(_.path.toAbsolutePath.toString)
+    .map(_.path.toUri.toURL)
     .toList
 
   override def main(args: Array[String]): Unit = {
