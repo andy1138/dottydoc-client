@@ -122,9 +122,8 @@ trait MemberLayout {
         span(link.title).render
     }
 
-    ref.kind match {
-      case "TypeReference" =>
-        val tref = ref.asInstanceOf[TypeReference]
+    ref match {
+      case TypeReference(tref) =>
         val infixTypes = "<:<" :: "=:=" :: Nil
         if (tref.paramLinks.length == 2 && infixTypes.contains(tref.title)) span(
           referenceToLinks(tref.paramLinks(0)),
@@ -145,32 +144,28 @@ trait MemberLayout {
         ).render
       else span(linkToAnchor(tref.tpeLink)).render
 
-      case "OrTypeReference" =>
-        val (left, right) = (ref.asInstanceOf[OrTypeReference].left, ref.asInstanceOf[OrTypeReference].right)
+      case OrTypeReference(left, right) =>
         span(
           referenceToLinks(left),
           span(cls := "type-separator", "|"),
           referenceToLinks(right)
         ).render
 
-      case "AndTypeReference" =>
-        val (left, right) = (ref.asInstanceOf[AndTypeReference].left, ref.asInstanceOf[AndTypeReference].right)
+      case AndTypeReference(left, right) =>
         span(
           referenceToLinks(left),
           span(cls := "type-separator", "&"),
           referenceToLinks(right)
         ).render
 
-      case "BoundsReference" =>
-        val (low, high) = (ref.asInstanceOf[BoundsReference].low, ref.asInstanceOf[BoundsReference].high)
+      case BoundsReference(low, high) =>
         span(
           referenceToLinks(low),
           span(cls := "type-separator", "<:"),
           referenceToLinks(high)
         ).render
 
-      case "FunctionReference" => {
-        val func = ref.asInstanceOf[FunctionReference]
+      case FunctionReference(func) => {
         span(
           cls := "no-left-margin",
           if (func.args.length > 1) "(" else "",
@@ -185,12 +180,11 @@ trait MemberLayout {
         ).render
       }
 
-      case "TupleReference" => {
-        val func = ref.asInstanceOf[TupleReference]
+      case TupleReference(tref) => {
         span(
           cls := "no-left-margin",
           "(",
-          func
+          tref
             .args
             .map(referenceToLinks)
             .flatMap(link => Seq(link, span(cls := "type-separator no-left-margin", ",").render)).init.toList,
