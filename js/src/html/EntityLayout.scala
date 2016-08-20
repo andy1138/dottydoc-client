@@ -1,6 +1,7 @@
 package dotty.tools.doc.client
 package html
 
+import scala.scalajs.{ js => sjs }
 import scalatags.JsDom.all._
 import org.scalajs.dom
 import org.scalajs.dom.html.{Anchor, Div}
@@ -67,6 +68,7 @@ case class EntityLayout(entity: Entity) extends MemberLayout {
                 comment.authors.map(x => dd(cls := "entity-author", raw(x))).toList
               )
             }.toOption,
+            constructors(entity),
             entity match {
               case x if x.hasMembers =>
                 val e = x.asInstanceOf[Entity with Members]
@@ -91,6 +93,49 @@ case class EntityLayout(entity: Entity) extends MemberLayout {
         cls := "mdl-layout__content"
       )
     )
+
+  def constructors(entity: Entity) = {
+    def paramLists(xs: sjs.Array[ParamList]) =
+      for {
+        plist <- xs
+        start =
+          if (plist.isImplicit) "(implicit" else "("
+        listCls =
+          if (plist.isImplicit) "member-param-list is-implicit no-left-margin"
+          else "member-param-list no-left-margin"
+      } yield {
+        span(cls := listCls, start) ::
+        plist.list.map(e => span(
+          cls := "no-left-margin",
+          e.title,
+          if (e.isByName) ": => "
+          else ": ",
+          referenceToLinks(e.ref),
+          if (e.isRepeated) "*"
+          else ""
+        )).toList ++
+        Seq(span(cls := "no-left-margin", ")"))
+      }
+
+    def templ(xs: sjs.Array[sjs.Array[ParamList]]) = div(
+      for {
+        constructor <- xs.toList
+      } yield div(
+        cls := "member-definition",
+        span(cls := "member-name", s"new ${entity.name}"),
+        paramLists(constructor).toList
+      )
+    )
+
+    entity match {
+      case Class(c) if c.constructors.nonEmpty =>
+        Seq(h5("Constructors"), templ(c.constructors))
+      case CaseClass(c) if c.constructors.nonEmpty =>
+        Seq(h5("Constructors"), templ(c.constructors))
+      case _ =>
+        Nil
+    }
+  }
 
   def packageView = ul(
     cls := "mdl-list packages",
