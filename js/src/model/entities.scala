@@ -24,6 +24,23 @@ trait Entity extends sjs.Object {
   val comment: sjs.UndefOr[Comment]
 }
 
+/** This trait is used to be able to pattern match on façade like:
+ *  {{{
+ *  entity match {
+ *    case Package(p) => "Found package!"
+ *    case Class(c)   => "Found class!"
+ *    ...
+ *  }
+ *  }}}
+ */
+trait EntityExtractor[E] {
+  def rightKind: String => Boolean
+
+  def unapply(e: Entity): Option[E] =
+    if (rightKind(e.kind)) Some(e.asInstanceOf[E])
+    else None
+}
+
 @ScalaJSDefined
 trait Comment extends sjs.Object {
   val body:                    String
@@ -69,6 +86,11 @@ trait TypeParams extends sjs.Object {
 }
 
 @ScalaJSDefined
+trait Constructors extends sjs.Object {
+  def constructors: sjs.Array[sjs.Array[ParamList]]
+}
+
+@ScalaJSDefined
 trait SuperTypes extends sjs.Object {
   val superTypes: sjs.Array[MaterializableLink]
 }
@@ -76,17 +98,33 @@ trait SuperTypes extends sjs.Object {
 @ScalaJSDefined
 trait Package extends Entity with Members
 
+object Package extends EntityExtractor[Package] {
+  def rightKind = _ == "package"
+}
+
 @ScalaJSDefined
-trait Class extends Entity with Members with Modifiers with TypeParams
+trait Class extends Entity with Members with Modifiers with TypeParams with Constructors
+
+object Class extends EntityExtractor[Class] {
+  def rightKind = _ == "class"
+}
 
 @ScalaJSDefined
 trait CaseClass extends Class
+
+object CaseClass extends EntityExtractor[CaseClass] {
+  def rightKind = _ == "case class"
+}
 
 @ScalaJSDefined
 trait Object extends Entity with Members with Modifiers
 
 @ScalaJSDefined
 trait Trait extends Class
+
+object Trait extends EntityExtractor[Trait] {
+  def rightKind = _ == "trait"
+}
 
 @ScalaJSDefined
 trait ParamList extends sjs.Object {
@@ -101,14 +139,26 @@ trait Def extends Entity with Modifiers with ReturnValue {
   val implicitlyAddedFrom: sjs.UndefOr[Reference]
 }
 
+object Def extends EntityExtractor[Def] {
+  def rightKind = _ == "def"
+}
+
 @ScalaJSDefined
 trait Val extends Entity with Modifiers {
   val implicitlyAddedFrom: sjs.UndefOr[Reference]
 }
 
+object Val extends EntityExtractor[Val] {
+  def rightKind = _ == "val"
+}
+
 @ScalaJSDefined
 trait Var extends Entity with Modifiers {
   val implicitlyAddedFrom: sjs.UndefOr[Reference]
+}
+
+object Var extends EntityExtractor[Var] {
+  def rightKind = _ == "var"
 }
 
 @ScalaJSDefined
