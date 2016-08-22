@@ -13,8 +13,7 @@ import html.MainFragment
     target.appendChild(MainFragment(EntityIndex.currentEntity).render)
     hljs.initHighlightingOnLoad()
 
-    val searchInput = document.getElementById("search").asInstanceOf[Input]
-    searchInput.onkeyup = new Search(searchInput).search()
+    KeyBindings.bind()
   }
 }
 
