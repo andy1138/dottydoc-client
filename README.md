@@ -7,7 +7,6 @@ the documentation for your project.
 
 How To
 ======
-
 Dottydoc works by supplying a mustache [template](./resources/template.html)
 and a list of [resources](./resources). These are then used to create a static
 website. As such, this project is published as a static blob without any
@@ -32,6 +31,11 @@ All scala files in [js](./js) are used to create `dottydoc.js` which is
 published as a resource.
 
 ## Generating a site ##
+This project currently relies on
+[#1453](https://github.com/lampepfl/dotty/pull/1453) getting merged - as such,
+to build the project you need to do `publishLocal` for my
+[topic/dottydoc](https://github.com/felixmulder/dotty/tree/topic/dottydoc)
+branch.
 
 To facilitate development, this project relies on dotty - but will purge these
 dependencies on publish - and is, as such, able to generate a static website
