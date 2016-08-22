@@ -66,3 +66,15 @@ Calling either of these generators will clone the standard library, for now
 this is a good fit since it contains a lot of useful code that we want to be
 able to render documentation for correctly - but in the long run this will
 probably go away.
+
+Publishing
+==========
+Because of current limitations in the build-script, we need to do the following
+to publish a local binary:
+
+```
+$ sbt
+> ;fullOptJS ;publishLocal
+```
+
+As this will place the `dottydoc.js` file in resources before publishing.
