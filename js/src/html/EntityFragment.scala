@@ -83,11 +83,13 @@ case class EntityFragment(entity: Entity) extends Fragment {
 
     val superTypes = entity match {
       case SuperTypes(supers) if supers.nonEmpty =>
-        Some(span(
+        Some(div(
           cls := "entity-super-types",
-          supers.collect {
-            case x => x.title
-          }.mkString("extends ", " with ", "")
+          span(cls := "keyword", "extends "),
+          span(supers.head.title),
+          supers.tail.flatMap { superTpe =>
+            span(cls := "keyword", "with ") :: span(superTpe.title) :: Nil
+          }.toList
         ))
       case _ => None
     }

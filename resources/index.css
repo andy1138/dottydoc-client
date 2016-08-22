@@ -105,11 +105,34 @@ main > div.page-content {
 
 div.entity-title {
     color: #34495e;
-    margin: 1.5em 0 1.5em;
+    background-color: #fff;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+    border-radius: 0.2em;
 }
 
-div.entity-title > span {
-    font-size: 2.0em;
+div.entity-title > span.entity-kind,
+div.entity-title > span.entity-type-params,
+div.entity-title > span.entity-modifiers {
+    font-weight: 100;
+}
+
+div.entity-title > div.entity-super-types {
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+div.entity-title > div.entity-super-types > span {
+    font-size: 0.7em;
+}
+
+div.entity-title > div.entity-super-types > span.keyword {
+    margin-left: 5px;
+    font-weight: 100;
+}
+
+div.entity-title > div.entity-super-types > span:nth-child(1) {
+    margin-left: 0;
 }
 
 div.entity-title > span+span {
