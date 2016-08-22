@@ -24,7 +24,7 @@ lazy val `dottydoc-client` =
   project.in(file("."))
   .settings(
     triggeredMessage  in ThisBuild := Watched.clearWhenTriggered,
-    scalaSource       in Test      := baseDirectory.value / "test" / "src",
+    scalaSource       in Test      := baseDirectory.value / "test",
     resourceDirectory in Compile   := baseDirectory.value / "resources",
     resources         in Compile   += (fullOptJS in (`client-js`, Compile)).value.data,
     compile           in Test      <<= (compile in Test) dependsOn cloneScalaLib,
@@ -66,6 +66,10 @@ lazy val `dottydoc-client` =
     }
   )
   .settings(publishing)
+  .settings(
+    addCommandAlias("generateArray",       "test:runMain dotty.tools.doc.test.ArrayMain") ++
+    addCommandAlias("generateCollections", "test:runMain dotty.tools.doc.test.CollectionsMain")
+  )
 
 lazy val `client-js` =
   project.in(file("js"))
