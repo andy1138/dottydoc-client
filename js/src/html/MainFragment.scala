@@ -12,6 +12,11 @@ case class MainFragment(entity: Entity) extends Fragment {
 
   val packageName = entity.path.dropRight(1).mkString(".")
 
+  val packageLink = a(
+    href := util.linking.linkTo(entity.path.dropRight(1), entity, "/index.html"),
+    packageName
+  )
+
   val entityName =
     if (entity.kind == "package") entity.name.split("\\.").last
     else entity.name
@@ -28,7 +33,7 @@ case class MainFragment(entity: Entity) extends Fragment {
     cls := "mdl-layout mdl-js-layout mdl-layout--fixed-drawer",
     div(
       cls := "mdl-layout__drawer",
-      span(cls := "mdl-layout-title subtitle", packageName),
+      span(cls := "mdl-layout-title subtitle", packageLink),
       span(cls := "mdl-layout-title",entityName),
       nav(
         cls := "related mdl-navigation",

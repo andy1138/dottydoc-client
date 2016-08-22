@@ -10,7 +10,7 @@ import model.ops._
 object linking {
   import EntityIndex.packages
 
-  def linkTo(path: sjs.Array[String], from: Entity): String = {
+  def linkTo(path: sjs.Array[String], from: Entity, ending: String = ".html"): String = {
     val offset = from.kind match {
       case "val" | "def" => 2
       case _ => 1
@@ -22,7 +22,7 @@ object linking {
     }
 
     prefix + {
-      "../" * (from.path.length - offset) + path.mkString("","/",".html")
+      "../" * (from.path.length - offset) + path.mkString("","/", ending)
     }
   }
 
