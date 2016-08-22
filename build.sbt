@@ -4,6 +4,22 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 val dottyVersion = "0.1-SNAPSHOT"
 
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-encoding", "UTF-8",
+  "-feature",
+  "-language:existentials",
+  "-language:higherKinds",
+  "-language:implicitConversions",
+  "-unchecked",
+  "-Yno-adapted-args",
+  "-Ywarn-dead-code",
+  "-Ywarn-unused-import",
+  "-Ywarn-numeric-widen",
+  "-Xfuture",
+  "-Xlint"
+)
+
 lazy val `dottydoc-client` =
   project.in(file("."))
   .settings(
