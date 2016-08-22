@@ -36,8 +36,10 @@ trait Entity extends sjs.Object {
 trait EntityExtractor[E] {
   def rightKind: String => Boolean
 
+  def extract: Entity => E = _.asInstanceOf[E]
+
   def unapply(e: Entity): Option[E] =
-    if (rightKind(e.kind)) Some(e.asInstanceOf[E])
+    if (rightKind(e.kind)) Some(extract(e))
     else None
 }
 
@@ -70,9 +72,19 @@ trait Members extends sjs.Object {
   val members: sjs.Array[Entity]
 }
 
+object Members extends EntityExtractor[sjs.Array[Entity]] {
+  def rightKind = ops.EntitiesWithMembers.contains(_)
+  override def extract = _.asInstanceOf[Members].members
+}
+
 @ScalaJSDefined
 trait Modifiers extends sjs.Object {
   val modifiers: sjs.Array[String]
+}
+
+object Modifiers extends EntityExtractor[sjs.Array[String]] {
+  def rightKind = ops.EntitiesWithModifiers.contains(_)
+  override def extract = _.asInstanceOf[Modifiers].modifiers
 }
 
 @ScalaJSDefined
@@ -85,6 +97,11 @@ trait TypeParams extends sjs.Object {
   val typeParams: sjs.Array[String]
 }
 
+object TypeParams extends EntityExtractor[sjs.Array[String]] {
+  def rightKind = ops.EntitiesWithTypeParams.contains(_)
+  override def extract = _.asInstanceOf[TypeParams].typeParams
+}
+
 @ScalaJSDefined
 trait Constructors extends sjs.Object {
   def constructors: sjs.Array[sjs.Array[ParamList]]
@@ -94,6 +111,12 @@ trait Constructors extends sjs.Object {
 trait SuperTypes extends sjs.Object {
   val superTypes: sjs.Array[MaterializableLink]
 }
+
+object SuperTypes extends EntityExtractor[sjs.Array[MaterializableLink]] {
+  def rightKind = ops.EntitiesWithSuperTypes.contains(_)
+  override def extract = _.asInstanceOf[SuperTypes].superTypes
+}
+
 
 @ScalaJSDefined
 trait Package extends Entity with Members
@@ -118,6 +141,10 @@ object CaseClass extends EntityExtractor[CaseClass] {
 
 @ScalaJSDefined
 trait Object extends Entity with Members with Modifiers
+
+object Object extends EntityExtractor[Object] {
+  def rightKind = _ == "object"
+}
 
 @ScalaJSDefined
 trait Trait extends Class
@@ -199,6 +226,11 @@ object ops {
     def typeParams: sjs.Array[String] =
       if (ent.kind == "def")
         ent.asInstanceOf[Def].typeParams
+      else sjs.Array()
+
+
+    def modifiers: sjs.Array[String] =
+      if (hasModifiers) ent.asInstanceOf[Modifiers].modifiers
       else sjs.Array()
 
     def hasMembers: Boolean =
