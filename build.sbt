@@ -67,6 +67,7 @@ lazy val `dottydoc-client` =
   )
   .settings(publishing)
   .settings(
+    addCommandAlias("generateArgs",        "test:runMain dotty.tools.doc.test.ArgsMain") ++
     addCommandAlias("generateArray",       "test:runMain dotty.tools.doc.test.ArrayMain") ++
     addCommandAlias("generateCollections", "test:runMain dotty.tools.doc.test.CollectionsMain")
   )

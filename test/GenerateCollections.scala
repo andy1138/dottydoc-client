@@ -44,4 +44,4 @@ trait GenerateCollections extends Dottydoc {
   }
 }
 
-object Main extends GenerateCollections
+object CollectionsMain extends GenerateCollections
