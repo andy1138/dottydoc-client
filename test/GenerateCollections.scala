@@ -7,14 +7,14 @@ import java.net.URL
 
 import dotty.tools.dottydoc.api.scala.Dottydoc
 
-object GenerateCollections extends Dottydoc {
+trait GenerateCollections extends Dottydoc {
   def getResource(path: String): File =
     new JFile(getClass.getResource(path).toURI).toScala
 
   val templatePath: URL =
     getResource("/template.html").path.toUri.toURL
 
-  val whitelistedFiles: Array[String] =
+  def whitelistedFiles: Array[String] =
     getResource("/scala-collections.whitelist")
     .lines
     .map(_.trim)
@@ -43,3 +43,5 @@ object GenerateCollections extends Dottydoc {
     )
   }
 }
+
+object Main extends GenerateCollections
