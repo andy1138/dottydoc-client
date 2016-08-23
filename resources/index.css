@@ -8,7 +8,14 @@ span.subtitle {
     padding-top: 32px;
 }
 
+div.package-container > span.mdl-layout-title {
+    margin-left: 40px;
+    font-size: 14px;
+    line-height: 16px;
+}
+
 ul.packages {
+    margin-top: 10px;
     padding-top: 0 !important;
 }
 
@@ -17,7 +24,6 @@ ul.packages > li.package {
     padding-left: 40px;
     font-size: 14px;
 }
-
 ul.packages > li.entity {
     padding: 0;
     transition: 0.3s;
@@ -55,7 +61,7 @@ li.entity > a.entity-name {
     text-decoration: none;
     font-weight: normal;
     color: #757575;
-    padding-left: 48px;
+    padding-left: 40px;
     font-size: 14px;
     font-family: "Helvetica","Arial",sans-serif;
     letter-spacing: 0;
