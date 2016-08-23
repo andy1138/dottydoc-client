@@ -1,11 +1,8 @@
 package dotty.tools.doc.client
 package html
 
-import scala.scalajs.{ js => sjs }
 import scalatags.JsDom.all._
 import model._
-import model.ops._
-import util.linking._
 
 case class TitleFragment(entity: Entity) extends Fragment {
   def render = title.render
