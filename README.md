@@ -31,12 +31,6 @@ All scala files in [js](./js) are used to create `dottydoc.js` which is
 published as a resource.
 
 ## Generating a site ##
-This project currently relies on
-[#1453](https://github.com/lampepfl/dotty/pull/1453) getting merged - as such,
-to build the project you need to do `publishLocal` for my
-[topic/dottydoc](https://github.com/felixmulder/dotty/tree/topic/dottydoc)
-branch.
-
 To facilitate development, this project relies on dotty - but will purge these
 dependencies on publish - and is, as such, able to generate a static website
 using the dottydoc interface without creating a cyclic dependency.
